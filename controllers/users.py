@@ -38,10 +38,19 @@ async def create_user( user: User ) -> User:
         # Aunque se manden en el payload igual los excluimos ya que sabes el 
         # state inicial cuando se crea el usuario.
 
-        user_dict = user.model_dump(exclude={"id","password","active", "admin"})
+        new_user = User(
+            name=user.name
+            , lastname=user.lastname
+            , email=user.email
+            , password=user.password
+        )
+
+        user_dict = new_user.model_dump(exclude={"id", "password"})
         inserted = coll.insert_one(user_dict)
-        user.id = str(inserted.inserted_id)
-        return user
+        new_user.id = str(inserted.inserted_id)
+        new_user.password = "*********"  # Mask the password in the response
+        return new_user
+
     except Exception as e:
         firebase_auth.delete_user(user_record.uid)
         logger.error(f"Error creating user: {str(e)}")
