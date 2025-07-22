@@ -9,7 +9,22 @@ from models.login import Login
 
 from utils.security import validateuser, validateadmin
 
+from routes.catalogtypes import router as catalogtypes_router
+from routes.catalogs import router as catalogs_router
+from routes.bundle_details import router as bundle_details_router
+from routes.order_statuses import router as order_statuses_router
+from routes.orders import router as orders_router
+from routes.order_details import router as order_details_router
+
 app = FastAPI()
+
+# Incluir routers
+app.include_router(catalogtypes_router)
+app.include_router(catalogs_router)
+app.include_router(bundle_details_router)
+app.include_router(order_statuses_router)
+app.include_router(orders_router)
+app.include_router(order_details_router)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

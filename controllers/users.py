@@ -92,5 +92,6 @@ async def login(user: Login) -> dict:
             , user_info["email"]
             , user_info["active"]
             , user_info["admin"]
+            , str(user_info["_id"])
         )
     }
