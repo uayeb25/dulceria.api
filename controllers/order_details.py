@@ -11,7 +11,7 @@ from datetime import datetime
 order_details_collection = get_collection("order_details")
 orders_collection = get_collection("orders")
 catalogs_collection = get_collection("catalogs")
-
+settings_collection = get_collection("app_settings")
 
 # ============================================================================
 # ORDER DETAILS - FUNCIONES HELPER
@@ -75,9 +75,17 @@ async def recalculate_order_totals(order_id: str) -> dict:
 
         if result and result[0]["subtotal"] > 0:
             subtotal = result[0]["subtotal"]
+
             # Calcular impuestos (15% por ejemplo - esto puede ser configurable)
-            tax_rate = 0.15
+            tax_result = settings_collection.find_one({"key": "general_tax"})
+            if tax_result and "value" in tax_result:
+                tax_rate = tax_result["value"]
+            else:
+                print("DEBUG: No se encontró tasa de impuesto, usando valor por defecto de 0.15")
+                tax_rate = 0.01
+
             taxes = subtotal * tax_rate
+
             # Por ahora no hay descuentos automáticos
             discount = 0.0
             total = subtotal + taxes - discount
@@ -355,7 +363,7 @@ async def delete_order_detail(order_id: str, detail_id: str, requesting_user_id:
         if result.modified_count > 0:
             # Recalcular totales de la orden después de eliminar el producto
             totals_result = await recalculate_order_totals(order_id)
-            
+
             response_data = {"modified_count": result.modified_count}
             if totals_result["success"]:
                 response_data["order_totals"] = {
@@ -364,7 +372,7 @@ async def delete_order_detail(order_id: str, detail_id: str, requesting_user_id:
                     "discount": totals_result["discount"],
                     "total": totals_result["total"]
                 }
-            
+
             return {
                 "success": True,
                 "message": "Producto eliminado de la orden exitosamente",
