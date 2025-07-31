@@ -85,10 +85,13 @@ jobs:
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        # Initialize Railway project if needed
-        railway project create dulceria-api || true
-        # Deploy the application
-        railway up --detach
+        # Connect to existing project or create new one
+        railway connect strong-grace || railway link
+        # List services in the current project
+        echo "Services in current project:"
+        railway service list
+        # Deploy to the first service or create a new one
+        railway up --detach --service web || railway up --detach
     
     - name: Get deployment URL
       env:
@@ -96,7 +99,7 @@ jobs:
       run: |
         # Wait a moment for deployment to initialize
         sleep 10
-        # Get the deployment URL
-        URL=$(railway domain)
+        # Get the deployment URL from the web service
+        URL=$(railway domain --service web 2>/dev/null || railway domain)
         echo "🚀 Deployment URL: $URL"
         echo "📖 Swagger UI: $URL/docs"
