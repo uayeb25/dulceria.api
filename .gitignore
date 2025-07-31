@@ -28,20 +28,7 @@ media/
 Dockerfile
 docker-compose.yml
 # FastAPI specific files
-*.json
+# *.json  # Commented out to allow railway.json
 *.yaml
-# Miscellaneous
-*.swp
-*.swo
-*.bak
-*.tmp
-# Type checking files
-mypy_cache/
-# Test files
-tests/
-# Documentation files
-docs/
-# Configuration files
-*.cfg
-*.ini
-secrets/
+# Secret files specifically
+secrets/*.json
