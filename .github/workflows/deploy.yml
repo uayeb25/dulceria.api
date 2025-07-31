@@ -89,14 +89,19 @@ jobs:
         echo "Authenticating with Railway..."
         export RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }}
         
-        # Check current status and available services
+        # Check current status
         echo "Current Railway status:"
         railway status
         
-        echo "Available services:"
-        railway service list
+        # Create or connect to a service
+        echo "Creating/connecting to service..."
+        railway service create web-api || railway service connect web-api || true
         
-        # Deploy using the detected environment
+        # Check status after service setup
+        echo "Status after service setup:"
+        railway status
+        
+        # Deploy using the service
         echo "Starting deployment..."
         railway up --detach
     
