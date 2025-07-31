@@ -85,21 +85,39 @@ jobs:
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        # Connect to existing project or create new one
-        railway connect strong-grace || railway link
-        # List services in the current project
-        echo "Services in current project:"
+        # Set up Railway authentication
+        echo "Authenticating with Railway..."
+        export RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }}
+        
+        # Check current status and available services
+        echo "Current Railway status:"
+        railway status
+        
+        echo "Available services:"
         railway service list
-        # Deploy to the first service or create a new one
-        railway up --detach --service web || railway up --detach
+        
+        # Deploy using the detected environment
+        echo "Starting deployment..."
+        railway up --detach
     
     - name: Get deployment URL
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
         # Wait a moment for deployment to initialize
-        sleep 10
-        # Get the deployment URL from the web service
-        URL=$(railway domain --service web 2>/dev/null || railway domain)
-        echo "🚀 Deployment URL: $URL"
-        echo "📖 Swagger UI: $URL/docs"
+        sleep 15
+        
+        # Check deployment status
+        echo "Deployment status:"
+        railway status
+        
+        # Get the deployment URL
+        echo "Getting deployment URL..."
+        URL=$(railway domain 2>/dev/null || echo "Domain not ready yet")
+        
+        if [ "$URL" != "Domain not ready yet" ]; then
+          echo "🚀 Deployment URL: $URL"
+          echo "📖 Swagger UI: $URL/docs"
+        else
+          echo "⏳ Deployment in progress. Check Railway dashboard for URL."
+        fi
