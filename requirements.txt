@@ -5,3 +5,4 @@ python-dotenv
 firebase-admin==6.9.0
 pyjwt
 mangum
+pytest
