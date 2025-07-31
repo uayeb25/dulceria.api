@@ -76,21 +76,27 @@ jobs:
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        echo "Available Railway services:"
-        railway service list || true
+        echo "Available Railway projects:"
+        railway project list || true
+        echo "Current context:"
+        railway status || true
     
     - name: Deploy to Railway
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        # Try to deploy using the first available service or create new one
-        railway up --detach --service dulceria-api || railway up --detach
+        # Initialize Railway project if needed
+        railway project create dulceria-api || true
+        # Deploy the application
+        railway up --detach
     
     - name: Get deployment URL
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        # Try to get domain for specific service first, then fallback to default
-        URL=$(railway domain --service dulceria-api 2>/dev/null || railway domain)
+        # Wait a moment for deployment to initialize
+        sleep 10
+        # Get the deployment URL
+        URL=$(railway domain)
         echo "🚀 Deployment URL: $URL"
         echo "📖 Swagger UI: $URL/docs"
