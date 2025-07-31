@@ -18,13 +18,12 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize Firebase - Keep original logic
+
 def initialize_firebase():
     if firebase_admin._apps:
-        return  # Already initialized
-    
+        return 
+
     try:
-        # Use the JSON file (works locally and in CI/CD after file creation)
         cred = credentials.Certificate("secrets/dulceria-secret.json")
         firebase_admin.initialize_app(cred)
         logger.info("Firebase initialized with JSON file")
@@ -50,9 +49,6 @@ async def create_user( user: User ) -> User:
 
     try:
         coll = get_collection("users")
-
-        # Aunque se manden en el payload igual los excluimos ya que sabes el 
-        # state inicial cuando se crea el usuario.
 
         new_user = User(
             name=user.name
