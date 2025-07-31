@@ -31,7 +31,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Test imports (basic validation)
+    - name: Test FastAPI import
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
       run: |
         python -c "from main import app; print('✅ FastAPI app imported successfully')"
     
@@ -39,6 +45,7 @@ jobs:
       env:
         MONGODB_URI: ${{ secrets.MONGODB_URI }}
         DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
       run: |
