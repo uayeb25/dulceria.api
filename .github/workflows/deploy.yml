@@ -72,16 +72,25 @@ jobs:
         curl -fsSL https://railway.app/install.sh | sh
         echo "$HOME/.railway/bin" >> $GITHUB_PATH
     
+    - name: List Railway services
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      run: |
+        echo "Available Railway services:"
+        railway service list || true
+    
     - name: Deploy to Railway
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        railway up --detach
+        # Try to deploy using the first available service or create new one
+        railway up --detach --service dulceria-api || railway up --detach
     
     - name: Get deployment URL
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        URL=$(railway domain)
+        # Try to get domain for specific service first, then fallback to default
+        URL=$(railway domain --service dulceria-api 2>/dev/null || railway domain)
         echo "🚀 Deployment URL: $URL"
         echo "📖 Swagger UI: $URL/docs"
