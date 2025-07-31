@@ -76,14 +76,12 @@ jobs:
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        railway login --token $RAILWAY_TOKEN
         railway up --detach
     
     - name: Get deployment URL
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        railway login --token $RAILWAY_TOKEN
         URL=$(railway domain)
         echo "🚀 Deployment URL: $URL"
         echo "📖 Swagger UI: $URL/docs"
