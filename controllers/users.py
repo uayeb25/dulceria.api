@@ -40,12 +40,12 @@ def initialize_firebase():
             cred = credentials.Certificate("secrets/dulceria-secret.json")
             firebase_admin.initialize_app(cred)
             logger.info("Firebase initialized with JSON file")
-            
+
     except Exception as e:
         logger.error(f"Failed to initialize Firebase: {e}")
         raise HTTPException(status_code=500, detail=f"Firebase configuration error: {str(e)}")
 
-# Initialize Firebase when module loads
+
 initialize_firebase()
 
 async def create_user( user: User ) -> User:
