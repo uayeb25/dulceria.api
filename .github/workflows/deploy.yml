@@ -103,14 +103,16 @@ jobs:
       run: |
         echo "Railway status:"
         railway status
-        echo "Checking existing services..."
-        railway service || echo "No service connected"
-        echo "Attempting to create and connect service..."
-        railway service create || echo "Service creation failed or already exists"
-        echo "Connecting to service..."
-        railway service connect || echo "Service connection failed"
-        echo "Starting deployment..."
-        railway up
+        echo "Listing existing services..."
+        railway service list || echo "Cannot list services"
+        echo "Attempting deployment with different service names..."
+        railway up --service web || \
+        railway up --service api || \
+        railway up --service app || \
+        railway up --service dulceria-api || \
+        railway up --service dulceria || \
+        railway up --service backend || \
+        (echo "Creating new service and deploying..." && railway up)
 
     - name: Get deployment URL
       env:
