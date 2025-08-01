@@ -92,28 +92,17 @@ jobs:
         echo "Token exists: $([ -n "$RAILWAY_TOKEN" ] && echo "YES" || echo "NO")"
         echo "Token length: ${#RAILWAY_TOKEN}"
         
-        # Export token explicitly
-        export RAILWAY_TOKEN="${{ secrets.RAILWAY_TOKEN }}"
-        
-        # Check if token is working
+        # Check if token is working - should work with project token
         echo "Checking Railway authentication..."
-        railway whoami || echo "Authentication failed - token may be invalid"
+        railway whoami || echo "Authentication failed - check project token"
         
-        # Try to list projects to verify auth
-        echo "Listing Railway projects..."
-        railway list || echo "Cannot list projects - not authenticated"
-        
-        # Initialize new Railway project (no arguments)
-        echo "Initializing Railway project..."
-        railway init || echo "Init failed - trying direct deployment"
-        
-        # Check status
+        # Check status (should work with project token)
         echo "Railway status:"
-        railway status || echo "Status not available"
+        railway status || echo "Status not available - need project token"
         
-        # Deploy using up command
-        echo "Starting deployment..."
-        railway up || echo "Deployment failed"
+        # Deploy directly to the linked project
+        echo "Starting deployment to existing project..."
+        railway up || echo "Deployment failed - verify project token and project exists"
     
     - name: Get deployment URL
       env:
