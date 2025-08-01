@@ -107,17 +107,24 @@ jobs:
         # Check CLI version
         railway --version
         
-        # Check auth
-        echo "Checking Railway authentication..."
-        railway whoami || echo "Auth check failed"
-        
         # Check status to see what we're working with
         echo "Railway status:"
         railway status || echo "No Railway project linked yet"
         
-        # Deploy directly
-        echo "Starting deployment..."
-        railway up || echo "Deployment failed"
+        # List services to see what's available
+        echo "Listing services..."
+        railway service list || echo "Cannot list services"
+        
+        # Deploy to specific service
+        echo "Starting deployment to service..."
+        railway up --service web || railway up --service api || railway up --service dulceria-api || {
+          echo "Trying to create new service..."
+          railway service create web
+          railway up --service web
+        } || {
+          echo "Trying deployment without service specification..."
+          railway up
+        }
     
     - name: Get deployment URL
       env:
