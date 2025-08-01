@@ -96,13 +96,17 @@ jobs:
         echo "Checking Railway authentication..."
         railway whoami || echo "Authentication failed - check project token"
         
-        # Check status (should work with project token)
+        # List services in the project
+        echo "Listing services in project..."
+        railway service list || railway status || echo "Cannot list services"
+        
+        # Check current status
         echo "Railway status:"
         railway status || echo "Status not available - need project token"
         
-        # Deploy directly to the linked project
-        echo "Starting deployment to existing project..."
-        railway up || echo "Deployment failed - verify project token and project exists"
+        # Deploy to specific service or create new one
+        echo "Starting deployment to project..."
+        railway up --service dulceria-api || railway up || echo "Deployment failed - verify project token and project exists"
     
     - name: Get deployment URL
       env:
