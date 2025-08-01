@@ -88,21 +88,24 @@ jobs:
         # Clean start - remove any existing railway local config (but keep railway.json)
         rm -rf .railway 2>/dev/null || true
         
-        # Login to Railway using token
-        echo "Logging into Railway..."
-        railway login --token $RAILWAY_TOKEN
+        # Check Railway CLI version and available commands
+        echo "Railway CLI version:"
+        railway version || railway --version || echo "Version command not available"
         
-        # Link to existing project or create new one
-        echo "Initializing Railway deployment..."
-        railway link dulceria-api-cicd || railway link --new dulceria-api-cicd
+        echo "Available commands:"
+        railway --help || railway help || echo "Help not available"
+        
+        # Try to connect/link to Railway
+        echo "Connecting to Railway..."
+        railway link dulceria-api-cicd || railway connect dulceria-api-cicd || echo "Link/Connect failed, trying deployment directly"
         
         # Check status
         echo "Railway status:"
-        railway status
+        railway status || echo "Status not available"
         
         # Deploy
         echo "Starting deployment..."
-        railway up --detach
+        railway up --detach || railway deploy --detach || railway up
     
     - name: Get deployment URL
       env:
