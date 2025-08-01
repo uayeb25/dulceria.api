@@ -3,6 +3,7 @@ import json
 import logging
 import firebase_admin
 import requests
+import base64
 from fastapi import HTTPException
 from firebase_admin import credentials, auth as firebase_auth
 from dotenv import load_dotenv
@@ -24,12 +25,27 @@ def initialize_firebase():
         return 
 
     try:
-        cred = credentials.Certificate("secrets/dulceria-secret.json")
-        firebase_admin.initialize_app(cred)
-        logger.info("Firebase initialized with JSON file")
+        # Try to get Firebase credentials from environment variable first (Railway)
+        firebase_creds_base64 = os.getenv("FIREBASE_CREDENTIALS_BASE64")
+        
+        if firebase_creds_base64:
+            # Decode the base64 credentials (for Railway deployment)
+            firebase_creds_json = base64.b64decode(firebase_creds_base64).decode('utf-8')
+            firebase_creds = json.loads(firebase_creds_json)
+            cred = credentials.Certificate(firebase_creds)
+            firebase_admin.initialize_app(cred)
+            logger.info("Firebase initialized with environment variable credentials")
+        else:
+            # Fallback to local file (for local development)
+            cred = credentials.Certificate("secrets/dulceria-secret.json")
+            firebase_admin.initialize_app(cred)
+            logger.info("Firebase initialized with JSON file")
+            
     except Exception as e:
         logger.error(f"Failed to initialize Firebase: {e}")
-        raise HTTPException(status_code=500, detail="Firebase configuration error")# Initialize Firebase when module loads
+        raise HTTPException(status_code=500, detail=f"Firebase configuration error: {str(e)}")
+
+# Initialize Firebase when module loads
 initialize_firebase()
 
 async def create_user( user: User ) -> User:

@@ -97,6 +97,25 @@ jobs:
         echo "Current context:"
         railway status || true
     
+    - name: Configure Railway environment variables
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        FIREBASE_CREDENTIALS_BASE64: ${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        MONGO_DB_NAME: ${{ secrets.MONGO_DB_NAME }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+      run: |
+        echo "Setting Railway environment variables..."
+        railway variables set FIREBASE_CREDENTIALS_BASE64="$FIREBASE_CREDENTIALS_BASE64" || echo "Failed to set FIREBASE_CREDENTIALS_BASE64"
+        railway variables set MONGODB_URI="$MONGODB_URI" || echo "Failed to set MONGODB_URI"
+        railway variables set DATABASE_NAME="$DATABASE_NAME" || echo "Failed to set DATABASE_NAME"
+        railway variables set MONGO_DB_NAME="$MONGO_DB_NAME" || echo "Failed to set MONGO_DB_NAME"
+        railway variables set SECRET_KEY="$SECRET_KEY" || echo "Failed to set SECRET_KEY"
+        railway variables set FIREBASE_API_KEY="$FIREBASE_API_KEY" || echo "Failed to set FIREBASE_API_KEY"
+        echo "✅ Environment variables configured"
+
     - name: Deploy to Railway
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
