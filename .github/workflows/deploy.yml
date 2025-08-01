@@ -88,9 +88,13 @@ jobs:
         # Clean start - remove any existing railway local config (but keep railway.json)
         rm -rf .railway 2>/dev/null || true
         
-        # Initialize new Railway project for CI/CD  
+        # Login to Railway using token
+        echo "Logging into Railway..."
+        railway login --token $RAILWAY_TOKEN
+        
+        # Link to existing project or create new one
         echo "Initializing Railway deployment..."
-        railway project create dulceria-api-cicd || railway link
+        railway link dulceria-api-cicd || railway link --new dulceria-api-cicd
         
         # Check status
         echo "Railway status:"
