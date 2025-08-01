@@ -85,23 +85,18 @@ jobs:
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        # Set up Railway authentication
-        echo "Authenticating with Railway..."
-        export RAILWAY_TOKEN=${{ secrets.RAILWAY_TOKEN }}
+        # Clean start - remove any existing railway local config (but keep railway.json)
+        rm -rf .railway 2>/dev/null || true
         
-        # Check current status
-        echo "Current Railway status:"
+        # Initialize new Railway project for CI/CD
+        echo "Initializing Railway deployment..."
+        railway project create dulceria-api-cicd || railway link
+        
+        # Check status
+        echo "Railway status:"
         railway status
         
-        # Create or connect to a service
-        echo "Creating/connecting to service..."
-        railway service create web-api || railway service connect web-api || true
-        
-        # Check status after service setup
-        echo "Status after service setup:"
-        railway status
-        
-        # Deploy using the service
+        # Deploy
         echo "Starting deployment..."
         railway up --detach
     

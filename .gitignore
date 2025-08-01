@@ -8,6 +8,9 @@ venv/
 .env
 # Database files
 *.db
+# Railway configuration backups and local configs
+railway.json.backup
+.railway/
 # Logs
 *.log
 # IDE specific files
