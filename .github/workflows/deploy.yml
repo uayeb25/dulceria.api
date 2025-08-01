@@ -69,8 +69,12 @@ jobs:
     
     - name: Install Railway CLI
       run: |
-        curl -fsSL https://railway.app/install.sh | sh
-        echo "$HOME/.railway/bin" >> $GITHUB_PATH
+        # Download specific Railway CLI version that works
+        wget https://github.com/railwayapp/cli/releases/download/v3.17.4/railway_3.17.4_linux_amd64.tar.gz
+        tar -xzf railway_3.17.4_linux_amd64.tar.gz
+        sudo mv railway /usr/local/bin/
+        chmod +x /usr/local/bin/railway
+        railway --version
     
     - name: List Railway services
       env:
@@ -85,28 +89,23 @@ jobs:
       env:
         RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
       run: |
-        # Clean start - remove any existing railway local config (but keep railway.json)
+        # Clean start
         rm -rf .railway 2>/dev/null || true
         
-        # Debug: Check if token exists
-        echo "Token exists: $([ -n "$RAILWAY_TOKEN" ] && echo "YES" || echo "NO")"
-        echo "Token length: ${#RAILWAY_TOKEN}"
+        # Check CLI version
+        railway --version
         
-        # Check if token is working - should work with project token
+        # Check auth
         echo "Checking Railway authentication..."
-        railway whoami || echo "Authentication failed - check project token"
+        railway whoami || echo "Auth check failed"
         
-        # List services in the project
-        echo "Listing services in project..."
-        railway service list || railway status || echo "Cannot list services"
-        
-        # Check current status
+        # Check status to see what we're working with
         echo "Railway status:"
-        railway status || echo "Status not available - need project token"
+        railway status || echo "No Railway project linked yet"
         
-        # Deploy to specific service or create new one
-        echo "Starting deployment to project..."
-        railway up --service dulceria-api || railway up || echo "Deployment failed - verify project token and project exists"
+        # Deploy directly
+        echo "Starting deployment..."
+        railway up || echo "Deployment failed"
     
     - name: Get deployment URL
       env:
