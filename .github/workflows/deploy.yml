@@ -106,6 +106,8 @@ jobs:
         echo "Listing existing services..."
         railway service list || echo "Cannot list services"
         echo "Attempting deployment with different service names..."
+        railway up --service "dulceria-api-cicd" || \
+        railway up --service dulceria-api-cicd || \
         railway up --service web || \
         railway up --service api || \
         railway up --service app || \
