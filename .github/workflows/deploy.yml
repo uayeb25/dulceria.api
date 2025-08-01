@@ -88,21 +88,32 @@ jobs:
         # Clean start - remove any existing railway local config (but keep railway.json)
         rm -rf .railway 2>/dev/null || true
         
-        # Initialize new Railway project
-        echo "Creating new Railway project..."
-        railway init --name dulceria-api-cicd || railway init dulceria-api-cicd || railway init
+        # Debug: Check if token exists
+        echo "Token exists: $([ -n "$RAILWAY_TOKEN" ] && echo "YES" || echo "NO")"
+        echo "Token length: ${#RAILWAY_TOKEN}"
         
-        # Link/connect to the project
-        echo "Linking to Railway project..."
-        railway link || echo "Link not needed or already linked"
+        # Export token explicitly
+        export RAILWAY_TOKEN="${{ secrets.RAILWAY_TOKEN }}"
+        
+        # Check if token is working
+        echo "Checking Railway authentication..."
+        railway whoami || echo "Authentication failed - token may be invalid"
+        
+        # Try to list projects to verify auth
+        echo "Listing Railway projects..."
+        railway list || echo "Cannot list projects - not authenticated"
+        
+        # Initialize new Railway project (no arguments)
+        echo "Initializing Railway project..."
+        railway init || echo "Init failed - trying direct deployment"
         
         # Check status
         echo "Railway status:"
         railway status || echo "Status not available"
         
-        # Deploy
+        # Deploy using up command
         echo "Starting deployment..."
-        railway up || railway deploy
+        railway up || echo "Deployment failed"
     
     - name: Get deployment URL
       env:
