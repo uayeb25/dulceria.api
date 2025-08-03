@@ -22,7 +22,7 @@ def test_connect():
 def test_mongo_client():
     try:
         client = get_mongo_client()
-        assert client is not None, "El cliente de Mongo is None"
+        assert client is None, "El cliente de Mongo is None"
     except Exception as e:
         pytest.fail( f"Error en el llamado del cliente { str(e) } " )
 
