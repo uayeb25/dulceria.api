@@ -22,14 +22,12 @@ logger = logging.getLogger(__name__)
 
 def initialize_firebase():
     if firebase_admin._apps:
-        return 
+        return
 
     try:
-        # Try to get Firebase credentials from environment variable first (Railway)
         firebase_creds_base64 = os.getenv("FIREBASE_CREDENTIALS_BASE64")
-        
+
         if firebase_creds_base64:
-            # Decode the base64 credentials (for Railway deployment)
             firebase_creds_json = base64.b64decode(firebase_creds_base64).decode('utf-8')
             firebase_creds = json.loads(firebase_creds_json)
             cred = credentials.Certificate(firebase_creds)

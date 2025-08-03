@@ -36,7 +36,6 @@ def read_root():
 @app.get("/health")
 def health_check():
     try:
-        # Simple health check that doesn't depend on external services
         return {
             "status": "healthy", 
             "timestamp": "2025-01-31", 
@@ -49,7 +48,6 @@ def health_check():
 @app.get("/ready")
 def readiness_check():
     try:
-        # More comprehensive check that includes dependencies
         from utils.mongodb import test_connection
         db_status = test_connection()
         return {
