@@ -38,7 +38,7 @@ def health_check():
     try:
         return {
             "status": "healthy", 
-            "timestamp": "2025-01-31", 
+            "timestamp": "2025-08-02", 
             "service": "dulceria-api",
             "environment": "production"
         }

@@ -19,7 +19,6 @@ if not URI:
 _client = None
 
 def get_mongo_client():
-    """Obtiene el cliente MongoDB (lazy loading)"""
     global _client
     if _client is None:
         _client = MongoClient(
@@ -36,8 +35,7 @@ def get_collection(col):
     client = get_mongo_client()
     return client[DB][col]
 
-def test_connection():
-    """Función para probar la conexión (solo cuando sea necesario)"""
+def t_connection():
     try:
         client = get_mongo_client()
         client.admin.command("ping")
