@@ -7,12 +7,12 @@ from controllers.catalogs import (
     update_catalog,
     deactivate_catalog
 )
-from utils.security import validateadmin
+from utils.security import validateuser
 
 router = APIRouter()
 
 @router.post("/catalogs", response_model=Catalog, tags=["📋 Catalogs"])
-@validateadmin
+@validateuser
 async def create_catalog_endpoint(request: Request, catalog: Catalog) -> Catalog:
     """Crear un nuevo catálogo"""
     return await create_catalog(catalog)
@@ -28,13 +28,13 @@ async def get_catalog_by_id_endpoint(catalog_id: str) -> Catalog:
     return await get_catalog_by_id(catalog_id)
 
 @router.put("/catalogs/{catalog_id}", response_model=Catalog, tags=["📋 Catalogs"])
-@validateadmin
+@validateuser
 async def update_catalog_endpoint(request: Request, catalog_id: str, catalog: Catalog) -> Catalog:
     """Actualizar un catálogo"""
     return await update_catalog(catalog_id, catalog)
 
 @router.delete("/catalogs/{catalog_id}", response_model=Catalog, tags=["📋 Catalogs"])
-@validateadmin
+@validateuser
 async def deactivate_catalog_endpoint(request: Request,catalog_id: str) -> Catalog:
     """Desactivar un catálogo"""
     return await deactivate_catalog(catalog_id)
