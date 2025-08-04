@@ -18,6 +18,16 @@ from routes.order_details import router as order_details_router
 
 app = FastAPI()
 
+# Add CORS
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for development; restrict in production
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
+
 # Incluir routers
 app.include_router(catalogtypes_router)
 app.include_router(catalogs_router)
