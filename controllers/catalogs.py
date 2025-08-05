@@ -53,7 +53,7 @@ async def get_catalogs() -> list[Catalog]:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching catalogs: {str(e)}")
 
-async def get_catalogs(skip: int = 0, limit: int = 10) -> dict:
+async def get_catalogs(skip: int = 0, limit: int = 1000) -> dict:
     try:
         # Usar pipeline optimizada para obtener catálogos con información del tipo
         pipeline = get_all_catalogs_with_types_pipeline(skip, limit)
